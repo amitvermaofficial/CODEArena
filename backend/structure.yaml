@@ -1,0 +1,12 @@
+backend/
+├── config/
+│   └── passport.config.js     ✅ Passport strategy setup here
+│
+├── controllers/
+│   └── auth.controller.js     ✅ Logic for login/signup/logout
+│
+├── routes/
+│   └── auth.route.js          ✅ /login, /register, /logout routes
+│
+├── middleware/
+│   └── authMiddleware.js      ✅ protectRoute / isAuthenticated
