@@ -1,68 +1,65 @@
-import mongoose, { Schema } from 'mongoose';
+// models/User.model.js
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const userSchema = new Schema({
+const UserSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
         unique: true,
         trim: true,
-        index: true
     },
     email: {
         type: String,
         required: true,
         unique: true,
         trim: true,
-        lowercase: true
+        lowercase: true,
     },
+    // Password is now optional, for users who sign up via OAuth
     password: {
         type: String,
-        required: true // Remember to hash this!
+        required: false, 
     },
-    fullName: {
+    profilePic: {
         type: String,
-        required: true
-    },
-    // NEW: Role for Admin access
-    role: {
-        type: String,
-        enum: ['user', 'admin'], // You can add 'moderator', 'sponsor' later
-        default: 'user'
-    },
-    profilePictureUrl: {
-        type: String,
-        default: 'https://default-avatar-url.com/avatar.png'
+        default: 'default_avatar_url'
     },
     bio: {
         type: String,
-        maxlength: 250
+        default: ''
     },
-    // ... all other fields from the previous schema remain the same
-    location: { type: String },
-    socialLinks: {
-        github: String,
-        linkedin: String,
-        twitter: String,
-        website: String
+    // Fields to store OAuth provider IDs
+    googleId: {
+        type: String,
     },
-    stats: {
-        points: { type: Number, default: 0 },
-        problemsSolved: {
-            total: { type: Number, default: 0 },
-            easy: { type: Number, default: 0 },
-            medium: { type: Number, default: 0 },
-            hard: { type: Number, default: 0 }
-        }
+    githubId: {
+        type: String,
     },
-    badges: [{ type: Schema.Types.ObjectId, ref: 'Badge' }],
-    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    connectionRequests: [{
-        from: { type: Schema.Types.ObjectId, ref: 'User' },
-        status: { type: String, enum: ['pending'], default: 'pending' }
-    }]
+    linkedinId: {
+        type: String,
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
+    // ... other fields like connections, stats, etc.
 }, { timestamps: true });
 
-const User = mongoose.model('User', userSchema);
-export default User; // Using default export for ES Modules
+// Pre-save hook to hash password if it's provided/modified
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password') || !this.password) {
+        return next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Method to compare passwords for local login
+UserSchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
+export const User = mongoose.model('User', UserSchema);
