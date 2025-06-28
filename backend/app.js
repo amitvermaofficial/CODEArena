@@ -5,19 +5,20 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';
+import { join } from "path";
 
-// import connectDB from './config/db.js'; // Your DB connection logic
-import { initializePassport } from './config/passport.config.js';
-import mainApiRouter from './routes/index.js';
-import { ApiResponse } from './utils/ApiResponse.js';
+import connectDB from './src/config/db.js'; // Your DB connection logic
+import { initializePassport } from './src/config/passport.config.js';
+
+import mainApiRouter from './src/routes/routes.js';
+import { ApiResponse } from './src/utils/ApiResponse.js';
 
 dotenv.config();
-initializePassport(passport); // Pass the passport instance to our config
+// initializePassport(passport); // Pass the passport instance to our config
 
 const app = express();
-
-// Connect to Database
-// connectDB();
+const __dirname = join(import.meta.dirname, '..'); 
+const PORT = process.env.PORT || 3000;
 
 // Core Middleware
 app.use(cors({
@@ -26,7 +27,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
-app.use(express.static("public"));
+app.use(express.static(join(__dirname, "public")));
 
 // --- Session Middleware ---
 // Must come BEFORE passport middleware
@@ -54,11 +55,7 @@ app.use('/api', mainApiRouter);
 
 // Server Start
 app.listen(PORT, () => {
+  // Connect to Database
   connectDB();
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });
-
-
-
-
-// server.js

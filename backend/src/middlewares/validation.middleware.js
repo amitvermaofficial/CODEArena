@@ -1,6 +1,6 @@
 // middleware/validation.middleware.js
 import { validationResult } from 'express-validator';
-import { ApiResponse } from '../utils/apiResponse.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
 
 export const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);

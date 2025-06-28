@@ -1,7 +1,6 @@
-// controllers/auth.controller.js
 import { registerUserService } from '../services/auth.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { ApiResponse } from '../utils/apiResponse.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
 
 // Controller for local registration
 export const registerUser = asyncHandler(async (req, res, next) => {

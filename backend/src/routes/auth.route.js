@@ -1,9 +1,8 @@
-// routes/auth.routes.js
 import express from 'express';
 import passport from 'passport';
 import { registerValidation } from '../validations/auth.validation.js';
-import { handleValidationErrors } from '../middleware/validation.middleware.js';
-import { protect } from '../middleware/auth.middleware.js';
+import { handleValidationErrors } from '../middlewares/validation.middleware.js';
+import { protect } from '../middlewares/auth.middleware.js';
 import {
     registerUser,
     loginSuccess,
@@ -48,7 +47,15 @@ router.get('/github/callback',
     oauthCallback
 );
 
-// (Add LinkedIn routes here in the same pattern)
+// --- GitHub OAuth ---
+// @route   GET api/auth/linkedin
+router.get('linkedin', passport.authenticate('linkedin', { scope: ['user:email'] }));
+
+// @route   GET api/auth/github/callback
+router.get('linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: '/' }),
+    oauthCallback
+)
 
 // --- Session Management ---
 // @route   GET api/auth/me (Check login status and get user data)

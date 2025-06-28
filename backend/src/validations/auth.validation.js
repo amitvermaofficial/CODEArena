@@ -1,4 +1,3 @@
-// validations/auth.validation.js
 import { body } from 'express-validator';
 
 export const registerValidation = [

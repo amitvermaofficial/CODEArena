@@ -1,6 +1,6 @@
 // services/auth.service.js
-import { User } from '../models/User.model.js'; // Your Mongoose user model
-import bcrypt from 'bcryptjs';
+import { User } from '../models/user/user.model.js'; // Your Mongoose user model
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const generateToken = (id) => {

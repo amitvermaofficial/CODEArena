@@ -1,11 +1,10 @@
-// routes/index.js
 import express from 'express';
-import authRouter from './auth.routes.js';
-import userRouter from './user.routes.js';
-import problemRouter from './problem.routes.js';
-import postRouter from './post.routes.js';
-import contestRouter from './contest.routes.js';
-// import collaborationRouter from './collaboration.routes.js';
+import authRouter from './auth.route.js';
+import userRouter from './user.route.js';
+import problemRouter from './problem.route.js';
+import postRouter from './post.route.js';
+import contestRouter from './contest.route.js';
+// import collaborationRouter from './collaboration.route.js';
 
 const router = express.Router();
 
