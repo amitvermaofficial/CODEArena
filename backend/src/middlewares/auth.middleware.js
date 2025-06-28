@@ -1,4 +1,3 @@
-// middleware/auth.middleware.js
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 // Middleware to check if the user is logged in

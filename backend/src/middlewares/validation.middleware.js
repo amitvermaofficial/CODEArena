@@ -1,4 +1,3 @@
-// middleware/validation.middleware.js
 import { validationResult } from 'express-validator';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
