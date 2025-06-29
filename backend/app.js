@@ -14,13 +14,13 @@ import mainApiRouter from './src/routes/routes.js';
 import { ApiResponse } from './src/utils/ApiResponse.js';
 
 dotenv.config();
-// initializePassport(passport); // Pass the passport instance to our config
+initializePassport(passport); // Pass the passport instance to our config
 
 const app = express();
 const __dirname = join(import.meta.dirname, '..'); 
 const PORT = process.env.PORT || 3000;
 
-// Core Middleware
+// Cors Middleware
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true
@@ -52,8 +52,27 @@ app.use(passport.session()); // To use persistent login sessions
 // API Routes
 app.use('/api', mainApiRouter);
 
+// Global Error Handling Middleware
+app.use((err, req, res, next) => {
+    if (err instanceof ApiError) {
+        return res.status(err.statusCode).json({
+            success: err.success,
+            message: err.message,
+            errors: err.errors,
+            data: err.data
+        });
+    } else {
+        console.error(err); // Log unexpected errors
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            errors: [err.message],
+            data: null
+        });
+    }
+});
 
-// Server Start
+
 app.listen(PORT, () => {
   // Connect to Database
   connectDB();

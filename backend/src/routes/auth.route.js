@@ -5,6 +5,7 @@ import { handleValidationErrors } from '../middlewares/validation.middleware.js'
 import { protect } from '../middlewares/auth.middleware.js';
 import {
     registerUser,
+    loginUser,
     loginSuccess,
     loginFailure,
     oauthCallback,
@@ -18,8 +19,11 @@ const router = express.Router();
 // @route   POST api/auth/register
 router.post('/register', registerValidation, handleValidationErrors, registerUser);
 
-// @route   POST api/auth/login
-router.post('/login',
+// Custom login with email/username and password
+router.post('/login', loginUser);
+
+// Passport login (optional)
+router.post('/login/passport',
     passport.authenticate('local', { failureRedirect: '/api/auth/login-failure' }),
     loginSuccess
 );

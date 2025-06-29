@@ -7,7 +7,7 @@ import {
   acceptConnectionRequest,
   removeConnection,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
 } from '../controllers/user.controller.js';
 
 // @route   GET api/users/profile/:username

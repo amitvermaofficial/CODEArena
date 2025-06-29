@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema({
@@ -7,6 +7,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
+        lowercase: true,
+        minlength: 3,
+        maxlength: 30,
+        index: true, // For faster lookups
     },
     email: {
         type: String,
@@ -19,11 +23,19 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: false, 
+        minlength: 6,
+    },
+    fullname: {
+        type: String,
+        trim: true,
+        minlength: 3,
+        maxlength: 50,
     },
     profilePic: {
         type: String,
-        default: 'default_avatar_url'
+        default: "https://icon-library.com/images/default-user-icon/default-user-icon-6.jpg",
     },
+    connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     bio: {
         type: String,
         default: ''
