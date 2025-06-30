@@ -24,8 +24,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false, 
         minlength: 6,
+        select: false, // Prevent password from being sent to client by default
     },
-    fullname: {
+    fullName: { // Renamed for consistency
         type: String,
         trim: true,
         minlength: 3,
@@ -35,7 +36,49 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "https://icon-library.com/images/default-user-icon/default-user-icon-6.jpg",
     },
-    connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    connections: [
+        { type: Schema.Types.ObjectId, ref: 'User' }
+    ], // Server-managed: Only modified by connection logic
+    problemSolved: [
+        { type: Schema.Types.ObjectId, ref: 'Problem' }
+    ], // Server-managed: Only modified upon successful problem submission
+    contestWon: [
+        { type: Schema.Types.ObjectId, ref: 'Contest' }
+    ], // Server-managed: Only modified when a contest is won
+    badges: [
+        { type: Schema.Types.ObjectId, ref: 'Badge' }
+    ], // Server-managed: Only awarded by the server based on achievements
+    // Additional fields for user profile
+    location: {
+        type: String,
+        default: ''
+    },
+    website: {
+        type: String,
+        default: ''
+    },
+    socialLinks: {
+        github: {
+            type: String,
+            default: ''
+        },
+        linkedin: {
+            type: String,
+            default: ''
+        },
+        twitter: {
+            type: String,
+            default: ''
+        },
+        facebook: {
+            type: String,
+            default: ''
+        }
+    },
+    skills: [{
+        type: String,
+        trim: true
+    }],
     bio: {
         type: String,
         default: ''
@@ -43,17 +86,22 @@ const UserSchema = new mongoose.Schema({
     // Fields to store OAuth provider IDs
     googleId: {
         type: String,
+        immutable: true, // Should not change after being set
     },
     githubId: {
         type: String,
+        immutable: true, // Should not change after being set
     },
     linkedinId: {
         type: String,
+        immutable: true, // Should not change after being set
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user',
+        select: false, // Hide from general queries
+        immutable: true, // Prevent modification except by special admin logic
     },
     // ... other fields like connections, stats, etc.
 }, { timestamps: true });
