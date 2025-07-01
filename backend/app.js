@@ -12,6 +12,7 @@ import { initializePassport } from './src/config/passport.config.js';
 
 import mainApiRouter from './src/routes/routes.js';
 import { ApiResponse } from './src/utils/ApiResponse.js';
+import { ApiError } from './src/utils/ApiError.js';
 
 dotenv.config();
 initializePassport(passport); // Pass the passport instance to our config

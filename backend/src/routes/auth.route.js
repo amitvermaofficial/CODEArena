@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { registerValidation } from '../validations/auth.validation.js';
+import { registerValidation, loginValidation } from '../validations/auth.validation.js';
 import { handleValidationErrors } from '../middlewares/validation.middleware.js';
 import { protect } from '../middlewares/auth.middleware.js';
 import {
@@ -20,7 +20,7 @@ const router = express.Router();
 router.post('/register', registerValidation, handleValidationErrors, registerUser);
 
 // Custom login with email/username and password
-router.post('/login', loginUser);
+router.post('/login', loginValidation, handleValidationErrors, loginUser);
 
 // Passport login (optional)
 router.post('/login/passport',

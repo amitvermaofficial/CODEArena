@@ -1,46 +1,50 @@
 import { User } from '../models/user/user.model.js'; 
 import bcrypt from 'bcrypt';
 import { generateToken } from '../utils/jwt.js'; 
-
+import { ApiError } from '../utils/ApiError.js';
 
 export const registerUserService = async (userData) => {
-    console.log("User data in service: ", userData);
     const { username, email, password } = userData;
 
-    // Check if user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        throw new Error("User already exists");
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+        throw new ApiError(409, "User with this email or username already exists");
     }
-
-    // const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
         username,
         email,
-        password: hashedPassword,
+        password,
     });
 
-    // Return user data and token
-    if (user) {
-        const userResponse = user.toObject();
-        delete userResponse.password; // Don't send password back
-        return { user: userResponse, token: generateToken(user._id) };
-    } else {
-        throw new Error("Invalid user data");
+    if (!user) { 
+        throw new ApiError(500, "Something went wrong while registering the user");
     }
+    
+    return user; 
 };
 
 export const loginUserService = async ({ email, username, password }) => {
-  // Find user by email or username
-  const user = await User.findOne({ email } ? { email } : { username });
-  if (!user) throw new Error("User not found");
-  
-  const isMatch = bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error("Invalid password");
+    const user = await User.findOne(email ? { email } : { username }).select('+password');
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
 
-  const userResponse = user.toObject();
-  delete userResponse.password;
-  return { user: userResponse, token: generateToken(user._id) };
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if (!isPasswordValid) {
+        throw new ApiError(401, "Invalid user credentials");
+    }
+
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    // Store refresh token in the database
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    const userResponse = user.toObject();
+    delete userResponse.password;
+    delete userResponse.refreshToken;
+
+    return { user: userResponse, accessToken, refreshToken };
 };

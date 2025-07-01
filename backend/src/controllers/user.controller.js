@@ -28,24 +28,30 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         throw new ApiError(404, "User not found");
     }
 
-    // Consider what data to return, excluding sensitive info like password
     const userProfile = {
-        username: user.username,
-        email: user.email, // You might exclude this in a real application
-        fullName: user.fullName,
-        profilePic: user.profilePic,
-        // ... other public profile fields
+      username: user.username,
+      fullname: user.fullname,
+      profilePic: user.profilePic,
+      bio: user.bio,
+      location: user.location,
+      website: user.website,
+      skills: user.skills,
+      socialLinks: user.socialLinks,
+      dob: user.dob, // optional, consider privacy
+      badges: user.badges,
+      problemSolved: user.problemSolved,
+      contestWon: user.contestWon,
     };
 
     return res.status(200).json(new ApiResponse(200, userProfile, "User profile fetched successfully"));
 });
 
 export const updateUserProfile = asyncHandler(async (req, res) => {
-    const { _id } = req.user; // From 'protect' middleware
+    const { _id } = req.user; 
 
     // 1. Define the ONLY fields a user is allowed to update.
     const allowedFields = [
-        'fullName',
+        'fullname',
         'profilePic',
         'location',
         'website',
@@ -61,8 +67,6 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
             updates[key] = req.body[key];
         }
     }
-
-    // If a user sends { "role": "admin" }, it will be ignored because "role" is not in `allowedFields`.
 
     // 3. Perform the update with the sanitized data.
     const updatedUser = await User.findByIdAndUpdate(_id, { $set: updates }, { new: true, runValidators: true }).select('-password');

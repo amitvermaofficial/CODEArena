@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -10,7 +11,7 @@ const UserSchema = new mongoose.Schema({
         lowercase: true,
         minlength: 3,
         maxlength: 30,
-        index: true, // For faster lookups
+        index: true, 
     },
     email: {
         type: String,
@@ -24,9 +25,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false, 
         minlength: 6,
-        select: false, // Prevent password from being sent to client by default
+        select: false, 
     },
-    fullName: { // Renamed for consistency
+    fullname: { 
         type: String,
         trim: true,
         minlength: 3,
@@ -35,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     profilePic: {
         type: String,
         default: "https://icon-library.com/images/default-user-icon/default-user-icon-6.jpg",
+    },
+    dob: {
+        type: Date,
+        default: null,
     },
     connections: [
         { type: Schema.Types.ObjectId, ref: 'User' }
@@ -48,10 +53,10 @@ const UserSchema = new mongoose.Schema({
     badges: [
         { type: Schema.Types.ObjectId, ref: 'Badge' }
     ], // Server-managed: Only awarded by the server based on achievements
-    // Additional fields for user profile
     location: {
         type: String,
-        default: ''
+        default: 'Earth', 
+        trim: true,
     },
     website: {
         type: String,
@@ -81,29 +86,48 @@ const UserSchema = new mongoose.Schema({
     }],
     bio: {
         type: String,
-        default: ''
+        default: '',
+        maxlength: 350, 
     },
     // Fields to store OAuth provider IDs
     googleId: {
         type: String,
-        immutable: true, // Should not change after being set
+        immutable: true, 
     },
     githubId: {
         type: String,
-        immutable: true, // Should not change after being set
+        immutable: true,
     },
     linkedinId: {
         type: String,
-        immutable: true, // Should not change after being set
+        immutable: true, 
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user',
-        select: false, // Hide from general queries
-        immutable: true, // Prevent modification except by special admin logic
+        select: false, 
+        immutable: true, 
     },
-    // ... other fields like connections, stats, etc.
+    isEmailVerified: {
+        type: Boolean,
+        default: false,
+        select: false, 
+    },
+    isActive: {
+        type: Boolean,
+        default: true, 
+        select: false, 
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false, 
+        select: false,
+    },
+    refreshToken: {
+        type: String,
+        select: false,
+    },
 }, { timestamps: true });
 
 // Pre-save hook to hash password if it's provided/modified
@@ -117,8 +141,36 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Method to compare passwords for local login
-UserSchema.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.isPasswordCorrect = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Method to generate access token
+UserSchema.methods.generateAccessToken = function () {
+    return jwt.sign(
+        {
+            _id: this._id,
+            email: this.email,
+            username: this.username,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+        }
+    );
+};
+
+// Method to generate refresh token
+UserSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
+        {
+            _id: this._id,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+        }
+    );
 };
 
 export const User = mongoose.model('User', UserSchema);
