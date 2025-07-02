@@ -14,14 +14,47 @@ const JUDGE0_HEADERS = {
 };
 
 export const getAllProblems = asyncHandler(async (req, res) => {
-  const problems = await Problem.find().select('-testCases.output');
+  // For the problems list page, we only need to send essential information.
+  // This reduces payload size and improves performance.
+  // `slug` is useful for creating clean URLs on the frontend (e.g., /problems/two-sum).
+  // `tags` are useful for filtering.
+  const problems = await Problem.find().select('title difficulty tags slug');
   return res.status(200).json(new ApiResponse(200, problems, 'All problems'));
 });
 
 export const getProblemById = asyncHandler(async (req, res) => {
   const problem = await Problem.findById(req.params.problemId);
-  if (!problem) throw new ApiError(404, 'Problem not found');
-  return res.status(200).json(new ApiResponse(200, problem, 'Problem details'));
+  if (!problem) {
+    throw new ApiError(404, 'Problem not found');
+  }
+
+  // Create a plain object to modify before sending to the user
+  const problemResponse = problem.toObject();
+
+  // Remove sensitive or unnecessary top-level fields
+  delete problemResponse.author;
+  delete problemResponse.createdAt;
+  delete problemResponse.updatedAt;
+  delete problemResponse.__v;
+
+  // Process test cases to hide sensitive information like the output of hidden tests
+  // and internal IDs.
+  if (problemResponse.testCases) {
+    problemResponse.testCases = problemResponse.testCases.map(tc => {
+      const testCaseResponse = {
+        input: tc.input,
+        isSample: tc.isSample,
+      };
+      // Only include the 'output' for sample test cases so users can validate their logic.
+      if (tc.isSample) {
+        testCaseResponse.output = tc.output;
+      }
+      // The internal '_id' of the test case is not sent.
+      return testCaseResponse;
+    });
+  }
+
+  return res.status(200).json(new ApiResponse(200, problemResponse, 'Problem details'));
 });
 
 export const submitSolution = asyncHandler(async (req, res) => {

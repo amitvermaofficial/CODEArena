@@ -34,7 +34,7 @@ router.get('/:problemId/submissions', protect, getMySubmissionsForProblem);
 router.post('/', protect, admin, createProblemValidation, handleValidationErrors, createProblem);
 
 // PUT api/v1/problems/:problemId -> Update a problem
-router.put('/:problemId', protect, admin,updateProblem);
+router.put('/:problemId', protect, admin, updateProblem);
 
 // DELETE api/v1/problems/:problemId -> Delete a problem
 router.delete('/:problemId', protect, admin, deleteProblem);
