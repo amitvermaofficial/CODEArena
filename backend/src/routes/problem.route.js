@@ -16,27 +16,27 @@ import {
 const router = express.Router();
 
 // --- User Routes ---
-// GET api/problems -> Get all problems (with filters)
+// GET api/v1/problems -> Get all problems (with filters)
 router.get('/', getAllProblems);
 
-// GET api/problems/:problemId -> Get a single problem
+// GET api/v1/problems/:problemId -> Get a single problem
 router.get('/:problemId', getProblemById);
 
-// POST api/problems/:problemId/submit -> Submit solution
+// POST api/v1/problems/:problemId/submit -> Submit solution
 router.post('/:problemId/submit', protect, submitSolution);
 
-// GET api/problems/:problemId/submissions -> Get my submissions for a problem
+// GET api/v1/problems/:problemId/submissions -> Get my submissions for a problem
 router.get('/:problemId/submissions', protect, getMySubmissionsForProblem);
 
 
 // --- Admin Routes ---
-// POST api/problems -> Create a new problem
+// POST api/v1/problems -> Create a new problem
 router.post('/', protect, admin, createProblemValidation, handleValidationErrors, createProblem);
 
-// PUT api/problems/:problemId -> Update a problem
+// PUT api/v1/problems/:problemId -> Update a problem
 router.put('/:problemId', protect, admin,updateProblem);
 
-// DELETE api/problems/:problemId -> Delete a problem
+// DELETE api/v1/problems/:problemId -> Delete a problem
 router.delete('/:problemId', protect, admin, deleteProblem);
 
 export default router;

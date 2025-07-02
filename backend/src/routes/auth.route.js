@@ -53,11 +53,11 @@ router.get('/github/callback',
 
 // --- GitHub OAuth ---
 // @route   GET api/auth/linkedin
-router.get('linkedin', passport.authenticate('linkedin', { scope: ['user:email'] }));
+router.get('/linkedin', passport.authenticate('linkedin'));
 
 // @route   GET api/auth/github/callback
-router.get('linkedin/callback',
-    passport.authenticate('linkedin', { failureRedirect: '/' }),
+router.get('/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: '/login' }),
     oauthCallback
 )
 

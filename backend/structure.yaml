@@ -1,12 +1,1 @@
-backend/
-├── config/
-│   └── passport.config.js     ✅ Passport strategy setup here
-│
-├── controllers/
-│   └── auth.controller.js     ✅ Logic for login/signup/logout
-│
-├── routes/
-│   └── auth.route.js          ✅ /login, /register, /logout routes
-│
-├── middleware/
-│   └── authMiddleware.js      ✅ protectRoute / isAuthenticated
+bro i'm creating a coding platform which have some feattures like feed section problems section contest section and profile section it has some features like in centest section admin will post contesst every week and only registered users can give the contest and on the connections sections user can see or search for users profile and send or accept request for thier connections and in thiss section both things will be available and on the feed section user can see the posts of their following users and he can like and comment on the post on the problems section user can see the problems and on clicking on the problems user will go to the /description section and there a basic IDE like leetcode have for writing code they can attempt problem on this and they have features like run and submit the code and code actually runs and admin can create problems and user will be assigned badges on the basis of thier active days and no. of problems solved if user is active at least for 1 min on the platform and solve at least 25 problems in that 50 days they will awarded with a badge of badges and so on and on the profile section user can see the profile dashboard and also edit the valid fields and alsoo user can change thier profile pic using multer or any other package according to you and admin have its own features for editing giving permission and changes which a admin have so now create all backend things which i mentioned above and the things which i forget to mention all the things create all the things along with the things whihch i have already created and also create basic templates in views folder using .pug files so basic show casing the backend features there is one more thing that user can call any of its connection friend on a video call for solving problems together it the call must be end-to-end encrypted and its ui then would be like page will be divided in 2 part vertically on the right side coding ide would be present and on the left top side video call would be present and on the left bottom side which is 55% height of vw height and will be scrolling and make sure there will be no bug and create all these things in a modularized way user's view on the page and option will be diffrent and for user it will be diffresnt create all the features with these things and template will bbe created in .pug file and must be working on the browseer

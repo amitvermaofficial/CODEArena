@@ -1,7 +1,6 @@
-// routes/collaboration.routes.js
 import express from 'express';
 const router = express.Router();
-import { protect } from  '../middleware/auth.middleware';
+import { protect } from '../middlewares/auth.middleware.js';
 import { startCollaborationSession, inviteUserToSession } from '../controllers/collaboration.controller.js';
 
 // @route   POST api/collaboration/start/:problemId

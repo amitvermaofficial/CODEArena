@@ -7,7 +7,13 @@ import {
   acceptConnectionRequest,
   removeConnection,
   getUserProfile,
-  updateUserProfile,
+  updateAccountDetails,
+  followUser,
+  unfollowUser,
+  searchUsers,
+  getUserBadges,
+  getNotifications,
+  markNotificationRead
 } from '../controllers/user.controller.js';
 
 // @route   GET api/users/profile/:username
@@ -18,7 +24,7 @@ router.get('/profile/:username', getUserProfile);
 // @route   PUT api/users/profile
 // @desc    Update the logged-in user's profile
 // @access  Private
-router.put('/profile', protect, updateUserProfile);
+router.put('/profile', protect, updateAccountDetails);
 
 // --- Connection Routes ---
 
@@ -41,5 +47,15 @@ router.post('/connections/accept/:requestId', protect, acceptConnectionRequest);
 // @desc    Remove a connection
 // @access  Private
 router.delete('/connections/:userId', protect, removeConnection);
+
+// @route   POST api/users/:username/follow
+// @desc    Follow a user
+// @access  Private
+router.post('/:username/follow', protect, followUser);
+
+// @route   POST api/users/:username/unfollow
+// @desc    Unfollow a user
+// @access  Private
+router.post('/:username/unfollow', protect, unfollowUser);
 
 export default router;
