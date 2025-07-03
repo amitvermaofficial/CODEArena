@@ -31,8 +31,6 @@ export const protect = asyncHandler(async (req, _, next) => {
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
-            // It's common to ask the client to refresh the token here.
-            // The client would then call the /refresh-token endpoint.
             throw new ApiError(401, "Access token expired. Please refresh your token.");
         }
         // For other JWT errors (e.g., malformed token, invalid signature)
