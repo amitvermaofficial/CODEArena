@@ -71,7 +71,7 @@ html
 
   h1 CodeArena Feed
   p Welcome! Here are some recent posts from the community.
-  if posts && posts?.length
+  if posts && posts.length
     each post in posts
       article(style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;")
         .post-header(style="display: flex; align-items: center; margin-bottom: 0.5rem;")
